@@ -1,12 +1,14 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import PocketBase, { type RecordModel } from 'pocketbase';
 	import { fly } from 'svelte/transition';
+	import ThemeSwitcher from '../../components/ThemeSwitcher.svelte';
 
 	// Define the type of the store
 	const activeClubNight: Writable<RecordModel | null> = writable(null);
 	let pb: PocketBase;
+	let subscription: any;
 
 	onMount(async () => {
 		pb = new PocketBase('http://localhost:8090');
@@ -15,7 +17,8 @@
 
 		if (initialClubNight) {
 			activeClubNight.set(initialClubNight);
-			pb.collection('club_night').subscribe(initialClubNight.id, (e) => {
+			subscription = pb.collection('club_night').subscribe(initialClubNight.id, (e) => {
+				console.log('Subscribed to changes');
 				if (e.action === 'update') {
 					activeClubNight.set(e.record); // update the activeClubNight object
 					console.log(`club night updated to ${e.record.current_guests} guests`);
@@ -25,6 +28,23 @@
 			console.log('no active club night');
 		}
 	});
+
+	const reload = async () => {
+		if (subscription) {
+			pb.collection('club_night').unsubscribe();
+		}
+
+		const clubNight = $activeClubNight;
+		if (clubNight) {
+			subscription = pb.collection('club_night').subscribe(clubNight.id, (e) => {
+				console.log('resubscribed to real time changes');
+				if (e.action === 'update') {
+					activeClubNight.set(e.record); // update the activeClubNight object
+					console.log(`club night updated to ${e.record.current_guests} guests`);
+				}
+			});
+		}
+	};
 
 	const incrementGuests = async () => {
 		const clubNight = $activeClubNight;
@@ -63,15 +83,37 @@
 			});
 		}
 	};
+
+	onDestroy(async () => {
+		if (subscription) {
+			pb.collection('club_night').unsubscribe();
+			console.log('Unsubscribed from real time events');
+		}
+	});
 </script>
 
-<p>Current guests:</p>
+<div class="flex flex-col items-center text-center">
+	{#if $activeClubNight}
+		<p class="mb-4 text-4xl">Current guests:</p>
 
-{#key $activeClubNight}
-	<p in:fly={{ duration: 250, x: 0, y: -20 }}>
-		{$activeClubNight ? $activeClubNight.current_guests : 'Loading...'}
-	</p>
-{/key}
+		{#key $activeClubNight}
+			<p in:fly={{ duration: 250, x: 0, y: -20 }} class="mb-4 text-6xl">
+				{$activeClubNight ? $activeClubNight.current_guests : 'Loading...'}
+			</p>
+		{/key}
 
-<button on:click={incrementGuests}>Increase guests</button>
-<button on:click={decrementGuests}>Increase guests</button>
+		<button on:click={incrementGuests} class="mb-2 w-full rounded bg-green-500 py-2 text-white"
+			>Increase guests</button
+		>
+		<button on:click={decrementGuests} class="w-full rounded bg-red-500 py-2 text-white"
+			>Decrease guests</button
+		>
+		<button on:click={reload} class="mt-2 w-full rounded bg-yellow-500 py-2 text-white"
+			>Reload</button
+		>
+	{:else}
+		<p>No active night.</p>
+	{/if}
+
+	<ThemeSwitcher />
+</div>

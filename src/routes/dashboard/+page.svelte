@@ -1,6 +1,26 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Chart from '../../components/Chart.svelte';
 	import DashboardHead from '../../components/DashboardHead.svelte';
+	import PocketBase, { type ListResult, type RecordModel } from 'pocketbase';
+	import { writable, type Writable } from 'svelte/store';
+	import moment from 'moment';
+
+	const activeClubNight: Writable<RecordModel | null> = writable(null);
+	const last10ClubNights: Writable<RecordModel[] | null> = writable(null);
+	let pb: PocketBase;
+
+	onMount(async () => {
+		pb = new PocketBase('http://localhost:8090');
+
+		const resultList = await pb.collection('club_night').getList(1, 10, {
+			sort: '-created'
+		});
+		last10ClubNights.set(resultList.items);
+
+		console.log('last 10 club nights', resultList);
+		console.log('last 10 club nights', $last10ClubNights);
+	});
 
 	export let data;
 	$: ({ user, isLoggedIn } = data);
@@ -15,10 +35,16 @@
 		<Chart />
 	</div>
 	<div class="w-2/5 bg-base-100">
-		<ul class="menu rounded-box bg-base-100">
-			<li><a>Item 1</a></li>
-			<li><a>Item 2</a></li>
-			<li><a>Item 3</a></li>
-		</ul>
+		<div class="h-64 max-h-[80vh] overflow-auto">
+			<ul class="menu min-h-full rounded-box bg-base-300">
+				{#each $last10ClubNights ?? [] as clubNight}
+					<li class="border-b border-gray-200">
+						<a href="/{clubNight.id}/details">
+							{clubNight.event_name}, {moment(clubNight.event_date).format('DD.MM.YYYY')}
+						</a>
+					</li>
+				{/each}
+			</ul>
+		</div>
 	</div>
 </div>

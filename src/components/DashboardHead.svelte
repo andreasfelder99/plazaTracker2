@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import PocketBase, { type RecordModel } from 'pocketbase';
 	import { fly } from 'svelte/transition';
@@ -7,18 +7,27 @@
 
 	// Define the type of the store
 	const activeClubNight: Writable<RecordModel | null> = writable(null);
+
 	let pb: PocketBase;
+
+	let intervalId: string | number | NodeJS.Timeout | undefined;
 
 	onMount(async () => {
 		themeChange(false);
 		pb = new PocketBase('http://localhost:8090');
 
-		const initialClubNight = await pb.collection('club_night').getFirstListItem('is_active=true');
-		if (initialClubNight) {
-			activeClubNight.set(initialClubNight);
-		} else {
-			console.log('no active club night');
-		}
+		intervalId = setInterval(async () => {
+			const initialClubNight = await pb.collection('club_night').getFirstListItem('is_active=true');
+			if (initialClubNight) {
+				activeClubNight.set(initialClubNight);
+			} else {
+				console.log('no active club night');
+			}
+		}, 5000);
+	});
+
+	onDestroy(async () => {
+		clearInterval(intervalId);
 	});
 </script>
 
