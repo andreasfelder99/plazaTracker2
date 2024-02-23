@@ -1,12 +1,12 @@
 //hooks.server.ts
 import { redirect, type Handle } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
-import { POCKETBASE_URL } from '$env/static/private';
+import { POCKETBASE_URL, POCKETBASE_URL_LOCAL } from '$env/static/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const isProd = process.env.NODE_ENV === 'production' ? true : false;
 	// Create a new PocketBase instance
-	event.locals.pb = new PocketBase(isProd ? POCKETBASE_URL : 'http://127.0.0.1:8090');
+	event.locals.pb = new PocketBase(isProd ? POCKETBASE_URL : POCKETBASE_URL_LOCAL);
 
 	// Load the authStore from the cookie
 	event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');

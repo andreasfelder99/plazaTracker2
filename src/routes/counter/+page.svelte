@@ -4,20 +4,18 @@
 	import PocketBase, { type RecordModel } from 'pocketbase';
 	import { fly } from 'svelte/transition';
 	import ThemeSwitcher from '../../components/ThemeSwitcher.svelte';
-	import dotenv from 'dotenv';
 
 	// Define the type of the store
 	const activeClubNight: Writable<RecordModel | null> = writable(null);
 	let pb: PocketBase;
 	let subscription: any;
 
-	dotenv.config();
-
 	onMount(async () => {
-		const url =
-			process.env.NODE_ENV === 'production'
-				? process.env.POCKETBASE_URL
-				: process.env.POCKETBASE_URL_LOCAL;
+		const url = import.meta.env.PROD
+			? import.meta.env.VITE_APP_POCKETBASE_URL
+			: import.meta.env.VITE_APP_POCKETBASE_URL_LOCAL;
+
+		console.log(url);
 		pb = new PocketBase(url);
 
 		const initialClubNight = await pb.collection('club_night').getFirstListItem('is_active=true');
