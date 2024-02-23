@@ -4,8 +4,9 @@ import PocketBase from 'pocketbase';
 import { POCKETBASE_URL } from '$env/static/private';
 
 export const handle: Handle = async ({ event, resolve }) => {
+	const isProd = process.env.NODE_ENV === 'production' ? true : false;
 	// Create a new PocketBase instance
-	event.locals.pb = new PocketBase(POCKETBASE_URL);
+	event.locals.pb = new PocketBase(isProd ? POCKETBASE_URL : 'http://127.0.0.1:8090');
 
 	// Load the authStore from the cookie
 	event.locals.pb.authStore.loadFromCookie(event.request.headers.get('cookie') || '');
@@ -39,7 +40,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
 	// Set the cookie
-	const isProd = process.env.NODE_ENV === 'production' ? true : false;
+	
 	response.headers.set(
 		'set-cookie',
 		event.locals.pb.authStore.exportToCookie({ secure: isProd, sameSite: 'Lax' })
