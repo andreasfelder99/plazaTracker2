@@ -34,6 +34,7 @@
 				if (e.action === 'update') {
 					// Update the active club night when there's an update
 					activeClubNight.set(e.record);
+					localGuestCount = e.record.current_guests;
 				}
 			});
 		} else {
@@ -65,6 +66,7 @@
 			subscription = pb.collection('club_night').subscribe(clubNight.id, (e) => {
 				if (e.action === 'update') {
 					activeClubNight.set(e.record);
+					localGuestCount = e.record.current_guests;
 				}
 			});
 		}
