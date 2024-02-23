@@ -5,13 +5,19 @@
 	import PocketBase, { type ListResult, type RecordModel } from 'pocketbase';
 	import { writable, type Writable } from 'svelte/store';
 	import moment from 'moment';
+	import dotenv from 'dotenv';
 
 	const activeClubNight: Writable<RecordModel | null> = writable(null);
 	const last10ClubNights: Writable<RecordModel[] | null> = writable(null);
 	let pb: PocketBase;
+	dotenv.config();
 
 	onMount(async () => {
-		pb = new PocketBase('http://localhost:8090');
+		const url =
+			process.env.NODE_ENV === 'production'
+				? process.env.POCKETBASE_URL
+				: process.env.POCKETBASE_URL_LOCAL;
+		pb = new PocketBase(url);
 
 		const resultList = await pb.collection('club_night').getList(1, 10, {
 			sort: '-created'

@@ -4,17 +4,23 @@
 	import PocketBase, { type RecordModel } from 'pocketbase';
 	import { fly } from 'svelte/transition';
 	import { themeChange } from 'theme-change';
+	import dotenv from 'dotenv';
 
 	// Define the type of the store
 	const activeClubNight: Writable<RecordModel | null> = writable(null);
 
 	let pb: PocketBase;
+	dotenv.config();
 
 	let intervalId: string | number | NodeJS.Timeout | undefined;
 
 	onMount(async () => {
 		themeChange(false);
-		pb = new PocketBase('http://localhost:8090');
+		const url =
+			process.env.NODE_ENV === 'production'
+				? process.env.POCKETBASE_URL
+				: process.env.POCKETBASE_URL_LOCAL;
+		pb = new PocketBase(url);
 
 		intervalId = setInterval(async () => {
 			const initialClubNight = await pb.collection('club_night').getFirstListItem('is_active=true');
