@@ -45,5 +45,9 @@
 		"pocketbase": "^0.21.1",
 		"svelte-chartjs": "^3.1.5",
 		"theme-change": "^2.5.0"
-	}
+	},
+	"engines": {    
+        "node": "16.x",
+        "npm": "8.x"
+    }
 }
