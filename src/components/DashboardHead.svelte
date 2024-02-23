@@ -14,9 +14,7 @@
 
 	onMount(async () => {
 		themeChange(false);
-		const url = import.meta.env.PROD
-			? import.meta.env.VITE_APP_POCKETBASE_URL
-			: import.meta.env.VITE_APP_POCKETBASE_URL_LOCAL;
+		const url = import.meta.env.PROD ? 'https://plaza.pockethost.io/' : 'http://127.0.0.1:8090';
 		pb = new PocketBase(url);
 
 		intervalId = setInterval(async () => {

@@ -11,9 +11,7 @@
 	let subscription: any;
 
 	onMount(async () => {
-		const url = import.meta.env.PROD
-			? import.meta.env.VITE_APP_POCKETBASE_URL
-			: import.meta.env.VITE_APP_POCKETBASE_URL_LOCAL;
+		const url = import.meta.env.PROD ? 'https://plaza.pockethost.io/' : 'http://127.0.0.1:8090';
 
 		console.log(url);
 		pb = new PocketBase(url);
