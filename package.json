@@ -38,6 +38,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@sveltejs/adapter-auto": "^3.1.1",
 		"@sveltejs/adapter-node": "^4.0.1",
 		"@types/express": "^4.17.21",
 		"chart.js": "^4.4.1",
