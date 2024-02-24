@@ -16,6 +16,6 @@
 	// ChartJS.register(Title, Tooltip, Legend, LineElement, LinearScale, PointElement, CategoryScale);
 </script>
 
-<div class="skeleton min-h-full">
-	<p class="text-center text-sm">Charts construction..</p>
+<div class="min-h-full min-w-full">
+	<p class="text-center text-sm">Charts under construction..</p>
 </div>

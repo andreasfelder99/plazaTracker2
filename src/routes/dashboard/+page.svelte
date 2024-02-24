@@ -5,8 +5,8 @@
 	import PocketBase, { type ListResult, type RecordModel } from 'pocketbase';
 	import { writable, type Writable } from 'svelte/store';
 	import moment from 'moment';
+	import ClubNightDetailView from '../../components/ClubNightDetailView.svelte';
 
-	const activeClubNight: Writable<RecordModel | null> = writable(null);
 	const last10ClubNights: Writable<RecordModel[] | null> = writable(null);
 	let pb: PocketBase;
 
@@ -23,29 +23,43 @@
 		console.log('last 10 club nights', $last10ClubNights);
 	});
 
+	let selectedClubNightID: string | null = null;
+
+	function selectClubNight(id: string) {
+		selectedClubNightID = id;
+	}
 	export let data;
 	$: ({ user, isLoggedIn } = data);
 </script>
 
-<div class="flex w-full flex-row flex-wrap p-3">
-	<DashboardHead />
-</div>
+<DashboardHead />
 
-<div class="flex flex-row gap-3 p-3">
-	<div class="w-3/5 bg-base-100">
+<div class="flex flex-row gap-6 p-6">
+	<div class="card w-3/5 rounded-lg bg-base-100 p-6 shadow-md">
 		<Chart />
 	</div>
-	<div class="w-2/5 bg-base-100">
-		<div class="h-64 max-h-[80vh] overflow-auto">
-			<ul class="menu min-h-full rounded-box bg-base-300">
+	<div class="w-2/5">
+		<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-100 p-6 shadow-md">
+			<ul class="space-y-4">
 				{#each $last10ClubNights ?? [] as clubNight}
 					<li class="border-b border-gray-200">
-						<a href="/{clubNight.id}/details">
+						<!-- svelte-ignore a11y-invalid-attribute -->
+						<button
+							class="text-md btn min-w-full font-semibold text-stone-600"
+							on:click={() => selectClubNight(clubNight.id)}
+						>
 							{clubNight.event_name}, {moment(clubNight.event_date).format('DD.MM.YYYY')}
-						</a>
+						</button>
 					</li>
 				{/each}
 			</ul>
 		</div>
 	</div>
+
+	{#if selectedClubNightID}
+		<ClubNightDetailView
+			bind:clubNightID={selectedClubNightID}
+			on:close={() => (selectedClubNightID = null)}
+		/>
+	{/if}
 </div>
