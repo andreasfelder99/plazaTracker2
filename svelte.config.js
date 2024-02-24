@@ -14,7 +14,12 @@ const config = {
 		adapter: adapter({
 			'runtime': 'nodejs18.x',
 		})
-	}
+	},
+	resolve: {
+		alias: {
+		  "xmlhttprequest-ssl": "./node_modules/engine.io-client/lib/xmlhttprequest.js"
+		}
+	  }
 };
 
 export default config;
