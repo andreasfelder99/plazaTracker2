@@ -4,10 +4,13 @@
 	import { writable } from 'svelte/store';
 	import moment from 'moment';
 	import { createEventDispatcher } from 'svelte';
+	import { io } from 'socket.io-client';
 
+	const socket = io();
 	const dispatch = createEventDispatcher();
 
-	export let clubNightID: string;
+	export let clubNightID: string | null = null;
+	export let isNewClubNight: boolean = false;
 	let pb: PocketBase;
 
 	const activeClubNight = writable<RecordModel | null>(null);
@@ -17,8 +20,27 @@
 		const url = import.meta.env.PROD ? 'https://plaza.pockethost.io/' : 'http://127.0.0.1:8090';
 		pb = new PocketBase(url);
 
-		const result = await pb.collection('club_night').getFirstListItem('id="' + clubNightID + '"');
-		activeClubNight.set(result);
+		console.log('clubNightID', clubNightID);
+		console.log('isNewClubNight', isNewClubNight);
+
+		if (clubNightID) {
+			const result = await pb.collection('club_night').getFirstListItem('id="' + clubNightID + '"');
+			activeClubNight.set(result);
+		} else {
+			isNewClubNight = true;
+			// Initialize activeClubNight with an empty object
+			activeClubNight.set({
+				id: '',
+				event_name: '',
+				event_date: '',
+				current_guests: 0,
+				max_guests: 0,
+				collectionId: '',
+				collectionName: '',
+				created: '',
+				updated: ''
+			});
+		}
 	});
 </script>
 
@@ -68,18 +90,24 @@
 					/>
 				</div>
 				<div class="flex justify-center">
-					<button class="btn btn-primary" type="submit"> Update Club Night </button>
+					{#if isNewClubNight}
+						<button class="btn btn-primary" type="submit"> Create Club Night </button>
+					{:else}
+						<button class="btn btn-primary" type="submit"> Update Club Night </button>
+					{/if}
 				</div>
 			</form>
 		{:else}
-			<p class="card rounded-lg bg-base-100 p-6 shadow-md">Club Night not found</p>
+			<span class="loading loading-bars loading-lg"></span>
 		{/if}
 		<div class="modal-action flex justify-center">
 			<button
 				class="btn"
 				on:click={() => {
 					activeClubNight.set(null);
+					isNewClubNight = false;
 					dispatch('close');
+					socket.emit('nightChanged');
 				}}>Close</button
 			>
 		</div>

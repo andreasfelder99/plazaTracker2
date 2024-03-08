@@ -23,12 +23,15 @@
 		pb = new PocketBase(url);
 
 		// Get the initial club night
+		getActiveClubNight();
+	});
+
+	async function getActiveClubNight() {
 		const initialClubNight = await pb.collection('club_night').getFirstListItem('is_active=true');
 		if (initialClubNight) {
 			activeClubNight.set(initialClubNight);
 		}
-	});
-
+	}
 	//WebSocket logic
 	socket.on('connect', () => {
 		console.log('Client connected'); // true
@@ -37,6 +40,11 @@
 
 	socket.on('eventID', (msg) => {
 		id = msg;
+	});
+
+	socket.on('nightHasChanged', () => {
+		console.log('Night has changed');
+		getActiveClubNight();
 	});
 
 	socket.on('currentGuests', (msg) => {
@@ -58,17 +66,17 @@
 	});
 </script>
 
-<div class="flex flex-col items-center text-center">
+<div class="flex min-h-[20%] flex-col items-center text-center">
 	{#if $activeClubNight}
 		<p class="mb-4 text-4xl">Current guests:</p>
 		<p class="mb-4 text-6xl">{guestCount}</p>
 		<button
 			on:click={() => socket.emit('increaseGuests')}
-			class="mb-2 w-full rounded bg-green-500 py-2 text-white">Increase guests</button
+			class="mb-2 min-h-[33%] w-full rounded bg-green-500 py-2 text-white">Increase guests</button
 		>
 		<button
 			on:click={() => socket.emit('decreaseGuests')}
-			class="w-full rounded bg-red-500 py-2 text-white">Decrease guests</button
+			class="min-h-[33%] w-full rounded bg-red-500 py-2 text-white">Decrease guests</button
 		>
 	{:else}
 		<span class="loading loading-spinner loading-md"></span>
@@ -80,7 +88,10 @@
 			>{/if}</span
 	>
 	{#if $activeClubNight}
-		<span class="text-md mt-4">Current Event: {$activeClubNight.event_name}</span>
+		<span class="text-md mt-4">Current Event: {$activeClubNight.event_name}.</span>
+		<span class="text-md mt-4"
+			>In case this is the wrong event - please reload once. This issue will be fixed.</span
+		>
 	{:else}
 		<p>No active night.</p>
 	{/if}

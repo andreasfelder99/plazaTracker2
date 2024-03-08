@@ -1,35 +1,15 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
-	import { writable, type Writable } from 'svelte/store';
-	import PocketBase, { type RecordModel } from 'pocketbase';
 	import { fly } from 'svelte/transition';
 	import { themeChange } from 'theme-change';
 
-	// Define the type of the store
-	const activeClubNight: Writable<RecordModel | null> = writable(null);
-
-	let pb: PocketBase;
-
-	let intervalId: string | number | NodeJS.Timeout | undefined;
+	export let activeClubNight;
 
 	onMount(async () => {
 		themeChange(false);
-		const url = import.meta.env.PROD ? 'https://plaza.pockethost.io/' : 'http://127.0.0.1:8090';
-		pb = new PocketBase(url);
-
-		intervalId = setInterval(async () => {
-			const initialClubNight = await pb.collection('club_night').getFirstListItem('is_active=true');
-			if (initialClubNight) {
-				activeClubNight.set(initialClubNight);
-			} else {
-				console.log('no active club night');
-			}
-		}, 10000);
 	});
 
-	onDestroy(async () => {
-		clearInterval(intervalId);
-	});
+	onDestroy(async () => {});
 </script>
 
 <div class="flex flex-nowrap gap-6 p-6">

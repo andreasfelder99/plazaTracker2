@@ -10,6 +10,10 @@
 	</a>
 {:else}
 	<a href="/login">
-		<button>Login using Github</button>
+		<button>Please log in</button>
 	</a>
+	<p>
+		Please note that this is an early version and might contain a lot of bugs. Especially if you
+		enter form data in an not expected format.
+	</p>
 {/if}

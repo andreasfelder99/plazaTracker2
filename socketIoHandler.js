@@ -44,6 +44,18 @@ export default function injectSocketIO(server){
                 }
                 io.emit('currentGuests', currentGuests); // Notify all clients of the new value
             })
+
+            socket.on('nightChanged', () => {
+                getActiveNight().then((night) => {
+                    socket.emit('eventFromServer', 'Night changed');
+                    currentGuests = night.current_guests;
+                    clubNightID = night.id;
+                    socket.emit('eventID', clubNightID)
+                    socket.emit('currentGuests', currentGuests)
+                    socket.emit('nightHasChanged');
+                    console.log('Night changed to: ', clubNightID);
+                })
+            })
         })
     });
         
