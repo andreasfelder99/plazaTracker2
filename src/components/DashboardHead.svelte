@@ -2,11 +2,20 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 	import { themeChange } from 'theme-change';
+	import { io } from 'socket.io-client';
+	import { writable } from 'svelte/store';
 
+	const socket = io();
+
+	const guestCount = writable(0);
 	export let activeClubNight;
 
 	onMount(async () => {
 		themeChange(false);
+	});
+
+	socket.on('currentGuests', (msg) => {
+		guestCount.set(msg);
 	});
 
 	onDestroy(async () => {});
@@ -14,10 +23,10 @@
 
 <div class="flex flex-nowrap gap-6 p-6">
 	<div class="card w-full rounded-lg bg-base-100 p-6 shadow-md md:w-1/2 lg:w-1/4">
-		<p class="mb-2 text-lg font-semibold">Current event:</p>
+		<p class="mb-2 text-lg font-medium">Current event:</p>
 		{#key $activeClubNight}
 			{#if $activeClubNight}
-				<p in:fly={{ duration: 250, x: 0, y: -20 }} class="text-xl font-bold">
+				<p in:fly={{ duration: 250, x: 0, y: -20 }} class="text-center text-2xl font-bold">
 					{$activeClubNight.event_name}
 				</p>
 			{:else}
@@ -26,10 +35,10 @@
 		{/key}
 	</div>
 	<div class="card w-full rounded-lg bg-base-100 p-6 shadow-md md:w-1/2 lg:w-1/4">
-		<p class="mb-2 text-lg font-semibold">Maximum Guests:</p>
+		<p class="mb-2 text-lg font-medium">Maximum Guests:</p>
 		{#key $activeClubNight}
 			{#if $activeClubNight}
-				<p in:fly={{ duration: 250, x: 0, y: -20 }} class="text-xl font-bold">
+				<p in:fly={{ duration: 250, x: 0, y: -20 }} class="text-center text-2xl font-bold">
 					{$activeClubNight.max_guests}
 				</p>
 			{:else}
@@ -38,19 +47,27 @@
 		{/key}
 	</div>
 	<div class="card w-full rounded-lg bg-base-100 p-6 shadow-md md:w-1/2 lg:w-1/4">
-		<p class="mb-2 text-lg font-semibold">Current Guests:</p>
+		<p class="mb-2 text-lg font-medium">Current Guests:</p>
 		{#key $activeClubNight}
 			{#if $activeClubNight}
-				<p in:fly={{ duration: 250, x: 0, y: -20 }} class="text-xl font-bold">
-					{$activeClubNight.current_guests}
+				<p
+					in:fly={{ duration: 250, x: 0, y: -20 }}
+					class="mb-2 text-center text-2xl font-bold {$guestCount / $activeClubNight.max_guests >
+					0.85
+						? 'text-2xl text-red-600'
+						: ''}"
+				>
+					{$guestCount}
 				</p>
 				<progress
-					class="progress w-full"
-					value={$activeClubNight.current_guests}
+					class="w-full {$guestCount / $activeClubNight.max_guests > 0.85
+						? 'progress progress-error'
+						: 'progress progress-success'}"
+					value={$guestCount}
 					max={$activeClubNight.max_guests}
 				></progress>
 			{:else}
-				<span class="loading loading-dots loading-md"></span>
+				<progress class="progress w-full"></progress>
 			{/if}
 		{/key}
 	</div>

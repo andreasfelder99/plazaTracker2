@@ -14,6 +14,7 @@
 
 	let pb: PocketBase;
 	let isNewClubNight = false;
+	let guestCount: number;
 
 	onMount(async () => {
 		const url = import.meta.env.PROD ? 'https://plaza.pockethost.io/' : 'http://127.0.0.1:8090';
@@ -57,7 +58,6 @@
 		socket.emit('nightChanged');
 		getLast10ClubNights();
 	}
-
 	export let data;
 	$: ({ user, isLoggedIn } = data);
 </script>
