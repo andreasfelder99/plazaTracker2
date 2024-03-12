@@ -66,17 +66,26 @@
 	});
 </script>
 
-<div class="flex min-h-[20%] flex-col items-center text-center">
+<div class="mx-2 flex min-h-[20%] flex-col items-center text-center">
 	{#if $activeClubNight}
-		<p class="mb-4 text-4xl">Current guests:</p>
-		<p class="mb-4 text-6xl">{guestCount}</p>
+		<div
+			class={`my-2 flex h-80 min-h-[33%] w-80 items-center justify-center rounded-full ${
+				guestCount / $activeClubNight.max_guests > 0.85 ? 'bg-red-500' : 'bg-green-500'
+			}`}
+		>
+			<p class="mb-4 justify-center text-center text-4xl text-white sm:text-6xl md:text-8xl">
+				{guestCount}
+			</p>
+		</div>
 		<button
 			on:click={() => socket.emit('increaseGuests')}
-			class="mb-2 min-h-[33%] w-full rounded bg-green-500 py-2 text-white">Increase guests</button
+			class="mb-2 min-h-[33%] w-full rounded bg-green-500 py-2 text-2xl text-white sm:text-4xl"
+			>Increase guests</button
 		>
 		<button
 			on:click={() => socket.emit('decreaseGuests')}
-			class="min-h-[33%] w-full rounded bg-red-500 py-2 text-white">Decrease guests</button
+			class="min-h-[33%] w-full rounded bg-red-500 py-2 text-2xl text-white sm:text-4xl"
+			>Decrease guests</button
 		>
 	{:else}
 		<span class="loading loading-spinner loading-md"></span>
@@ -89,7 +98,7 @@
 	>
 	{#if $activeClubNight}
 		<span class="text-md mt-4">Current Event: {$activeClubNight.event_name}.</span>
-		<span class="text-md mt-4"
+		<span class="text-md mt-4 text-sm"
 			>In case this is the wrong event - please reload once. This issue will be fixed.</span
 		>
 	{:else}
