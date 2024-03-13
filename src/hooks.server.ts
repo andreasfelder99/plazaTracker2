@@ -3,6 +3,11 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import PocketBase from 'pocketbase';
 import { POCKETBASE_URL, POCKETBASE_URL_LOCAL } from '$env/static/private';
 
+//Update value after aftger changed
+//alle 5 minuten datenpunkt
+//Zeiten einstellen mit datum, filter setzen
+//haptic 
+
 export const handle: Handle = async ({ event, resolve }) => {
 	const isProd = process.env.NODE_ENV === 'production' ? true : false;
 	// Create a new PocketBase instance
@@ -30,6 +35,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	// Check if the user is logged on every request to '/dashboard/...'
 	if (event.url.pathname.startsWith('/dashboard')) {
+		if (!event.locals.user) {
+			// Redirect to the login page if the user is not logged in
+			throw redirect(303, '/login');
+		}
+	}
+	if (event.url.pathname.startsWith('/counter')) {
 		if (!event.locals.user) {
 			// Redirect to the login page if the user is not logged in
 			throw redirect(303, '/login');

@@ -26,7 +26,7 @@
 					>
 				</label>
 			</div>
-			<div class="mx-2 flex-1 px-2">Plaza Tracker</div>
+			<div class="mx-2 flex-1 px-2"><a href="/">Plaza Tracker</a></div>
 			<div class="hidden flex-none lg:block">
 				<ul class="menu menu-horizontal">
 					<!-- Navbar menu content -->

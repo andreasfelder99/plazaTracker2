@@ -61,64 +61,68 @@
 	$: ({ user, isLoggedIn } = data);
 </script>
 
-<DashboardHead {activeClubNight} />
+{#if user?.name == 'admin'}
+	<DashboardHead {activeClubNight} />
 
-<div class="flex flex-row gap-6 p-6">
-	<div class="card w-3/5 rounded-lg bg-base-200 p-6 shadow-md">
-		<Chart />
-	</div>
-	<div class="w-2/5">
-		<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
-			<ul class="space-y-4">
-				{#each $last10ClubNights ?? [] as clubNight}
-					<li class="border-b border-gray-200">
-						<!-- svelte-ignore a11y-invalid-attribute -->
-						<button
-							class="text-md btn min-w-[66%] bg-base-300 font-semibold"
-							on:click={() => selectClubNight(clubNight.id)}
-						>
-							{clubNight.event_name}, {moment(clubNight.event_date).format('DD.MM.YYYY')}
-						</button>
-						{#if clubNight.is_active}
-							<span class="text-md btn-outline mb-2 min-w-[33%] font-bold text-green-500"
-								>Active</span
-							>
-						{:else}
+	<div class="flex flex-row gap-6 p-6">
+		<div class="card w-3/5 rounded-lg bg-base-200 p-6 shadow-md">
+			<Chart />
+		</div>
+		<div class="w-2/5">
+			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
+				<ul class="space-y-4">
+					{#each $last10ClubNights ?? [] as clubNight}
+						<li class="border-b border-gray-200">
+							<!-- svelte-ignore a11y-invalid-attribute -->
 							<button
-								class="text-md btn btn-outline mb-2 min-w-[33%] font-semibold text-yellow-500"
-								on:click={() => activateClubNight(clubNight.id)}
+								class="text-md btn min-w-[66%] bg-base-300 font-semibold"
+								on:click={() => selectClubNight(clubNight.id)}
 							>
-								Activate
+								{clubNight.event_name}, {moment(clubNight.event_date).format('DD.MM.YYYY')}
 							</button>
-						{/if}
-					</li>
-				{/each}
-			</ul>
+							{#if clubNight.is_active}
+								<span class="text-md btn-outline mb-2 min-w-[33%] font-bold text-green-500"
+									>Active</span
+								>
+							{:else}
+								<button
+									class="text-md btn btn-outline mb-2 min-w-[33%] font-semibold text-yellow-500"
+									on:click={() => activateClubNight(clubNight.id)}
+								>
+									Activate
+								</button>
+							{/if}
+						</li>
+					{/each}
+				</ul>
+			</div>
 		</div>
+		{#if selectedClubNightID}
+			<ClubNightDetailView
+				bind:clubNightID={selectedClubNightID}
+				on:close={() => (selectedClubNightID = null)}
+			/>
+		{/if}
 	</div>
-	{#if selectedClubNightID}
-		<ClubNightDetailView
-			bind:clubNightID={selectedClubNightID}
-			on:close={() => (selectedClubNightID = null)}
-		/>
-	{/if}
-</div>
-<div class="flex flex-row gap-6 p-6">
-	<div class="w-4/5">
-		<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md"></div>
-	</div>
-	<div class="w-1/5">
-		<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
-			<button class="btn btn-success" on:click={createNewClubNight}>Create new event</button>
+	<div class="flex flex-row gap-6 p-6">
+		<div class="w-4/5">
+			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md"></div>
 		</div>
+		<div class="w-1/5">
+			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
+				<button class="btn btn-success" on:click={createNewClubNight}>Create new event</button>
+			</div>
+		</div>
+		{#if isNewClubNight}
+			<ClubNightDetailView
+				bind:clubNightID={selectedClubNightID}
+				on:close={() => {
+					selectedClubNightID = null;
+					isNewClubNight = false;
+				}}
+			/>
+		{/if}
 	</div>
-	{#if isNewClubNight}
-		<ClubNightDetailView
-			bind:clubNightID={selectedClubNightID}
-			on:close={() => {
-				selectedClubNightID = null;
-				isNewClubNight = false;
-			}}
-		/>
-	{/if}
-</div>
+{:else}
+	<p>Not authorized</p>
+{/if}

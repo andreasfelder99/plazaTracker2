@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PocketBase from 'pocketbase';
 	export let data;
 	$: ({ user, isLoggedIn } = data);
 </script>
@@ -6,7 +7,7 @@
 {#if isLoggedIn}
 	<h2>Welcome {user?.username}</h2>
 	<a href="/logout">
-		<button>Logout</button>
+		<button class="btn btn-warning">Logout</button>
 	</a>
 {:else}
 	<a href="/login">
