@@ -29,7 +29,7 @@
 
 	async function getLast10ClubNights() {
 		const resultList = await pb.collection('club_night').getList(1, 10, {
-			sort: '-is_active, +created'
+			sort: '-is_active,-created'
 		});
 		last10ClubNights.set(resultList.items);
 		for (const clubNight of resultList.items) {
