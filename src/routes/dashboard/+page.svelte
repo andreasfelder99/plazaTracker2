@@ -106,7 +106,26 @@
 	</div>
 	<div class="flex flex-row gap-6 p-6">
 		<div class="w-4/5">
-			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md"></div>
+			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
+				<div class="grid grid-cols-4 gap-4">
+					<div class="col-span-1 border-r border-gray-200 flex flex-col items-center justify-center">
+						<h2 class="text-lg font-bold">Troughput</h2>
+						<p>{$activeClubNight ? $activeClubNight.durchlauf : 'No active club night'}</p>
+					</div>
+					<div class="col-span-1 border-r border-gray-200 flex flex-col items-center justify-center">
+						<h2 class="text-lg font-bold">Trend</h2>
+						<p></p>
+					</div>
+					<div class="col-span-1 border-r border-gray-200 flex flex-col items-center justify-center">
+						<h2 class="text-lg font-bold">.</h2>
+						<p></p>
+					</div>
+					<div class="col-span-1 flex flex-col items-center justify-center">
+						<h2 class="text-lg font-bold">.</h2>
+						<p></p>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="w-1/5">
 			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">

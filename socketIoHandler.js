@@ -18,12 +18,20 @@ export default function injectSocketIO(server){
 
         let currentGuests = night.current_guests;
         let clubNightID = night.id;
-        
+        let durchlauf = night.durchlauf;
+
+        // Save the current number of guests to the database every 10 seconds
         setInterval(() => {
             if(currentGuests){
-                saveCurrentGuests(currentGuests, clubNightID);
+                saveCurrentGuests(currentGuests, durchlauf, clubNightID);
             }
         }, 10000);
+
+        setInterval(() => {
+            if(currentGuests){
+                createLogEntry(currentGuests, clubNightID);
+            }
+        }, 5 * 60 * 1000);
 
         io.on('connection', (socket) => {
             socket.emit('eventFromServer', 'Environment: PRODUCTION')
@@ -34,6 +42,7 @@ export default function injectSocketIO(server){
             // Listen for events from the client to increase or decrease currentGuests
             socket.on('increaseGuests', () => {
                 currentGuests++;
+                durchlauf++;
                 console.log('Increased guests');
                 io.emit('currentGuests', currentGuests); // Notify all clients of the new value
             })
@@ -71,12 +80,31 @@ export default function injectSocketIO(server){
     }
     /**
      * @param {number} guests
+     * @param {number} durchlauf
+     *
      * @param {string} id
      */
-    async function saveCurrentGuests(guests, id) {
+    async function saveCurrentGuests(guests, durchlauf,  id) {
+        const data = {
+            current_guests: guests,
+            durchlauf: durchlauf,
+        }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const record = await pb.collection('club_night').update(id, { current_guests: guests });
-        console.log('Updated guests number to ' + guests + ' in the database.');
+        const record = await pb.collection('club_night').update(id, data);
+        console.log('Updated guests number to ' + guests + ' and durchlauf to ' + durchlauf + ' in the database.');
+    }
+
+    /**
+     * @param {number} guests
+     * @param {string} clubNightId
+     */
+    async function createLogEntry(guests, clubNightId){
+        const logEntry = {
+            club_night_id: clubNightId,
+            guests: guests,
+        }
+        const result = await pb.collection('night_data').create(logEntry);
+        console.log('Log entry created: ', result);
     }
 
     console.log('Socket.io server injected');
