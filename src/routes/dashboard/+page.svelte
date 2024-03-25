@@ -29,7 +29,7 @@
 
 	async function getLast10ClubNights() {
 		const resultList = await pb.collection('club_night').getList(1, 10, {
-			sort: '-is_active'
+			sort: '-is_active, +created'
 		});
 		last10ClubNights.set(resultList.items);
 		for (const clubNight of resultList.items) {
@@ -81,12 +81,12 @@
 								{clubNight.event_name}, {moment(clubNight.event_date).format('DD.MM.YYYY')}
 							</button>
 							{#if clubNight.is_active}
-								<span class="text-md btn-outline mb-2 min-w-[33%] font-bold text-green-500"
+								<span class="text-md btn-outline mb-2 min-w-[15%] font-bold text-green-500"
 									>Active</span
 								>
 							{:else}
 								<button
-									class="text-md btn btn-outline mb-2 min-w-[33%] font-semibold text-yellow-500"
+									class="text-md btn btn-outline mb-2 min-w-[15%] ml-2 font-semibold text-yellow-500"
 									on:click={() => activateClubNight(clubNight.id)}
 								>
 									Activate
