@@ -99,11 +99,15 @@ export default function injectSocketIO(server){
      * @param {string} clubNightId
      */
     async function createLogEntry(guests, clubNightId){
-        const logEntry = {
-            club_night_id: clubNightId,
-            guests: guests,
-        }
-        const result = await pb.collection('night_data').create(logEntry);
+        console.log('Current guests: ', guests);
+        console.log('Club night ID: ', clubNightId);
+
+        const data = {
+            "current_guests": guests,
+            "club_night": clubNightId
+        };
+
+        const result = await pb.collection('night_data').create(data);
         console.log('Log entry created: ', result);
     }
 
