@@ -59,6 +59,7 @@ export default function injectSocketIO(server){
                     socket.emit('eventFromServer', 'Night changed');
                     currentGuests = night.current_guests;
                     clubNightID = night.id;
+                    durchlauf = night.durchlauf;
                     socket.emit('eventID', clubNightID)
                     socket.emit('currentGuests', currentGuests)
                     socket.emit('nightHasChanged');
