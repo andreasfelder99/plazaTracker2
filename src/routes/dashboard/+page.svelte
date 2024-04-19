@@ -65,10 +65,7 @@
 	<DashboardHead {activeClubNight} />
 
 	<div class="flex flex-row gap-6 p-6">
-		<div class="card w-3/5 rounded-lg bg-base-200 p-6 shadow-md">
-			<Chart />
-		</div>
-		<div class="w-2/5">
+		<div class="w-3/5">
 			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
 				<ul class="space-y-4">
 					{#each $last10ClubNights ?? [] as clubNight}
@@ -97,15 +94,7 @@
 				</ul>
 			</div>
 		</div>
-		{#if selectedClubNightID}
-			<ClubNightDetailView
-				bind:clubNightID={selectedClubNightID}
-				on:close={() => (selectedClubNightID = null)}
-			/>
-		{/if}
-	</div>
-	<div class="flex flex-row gap-6 p-6">
-		<div class="w-4/5">
+		<div class="w-2/5">
 			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
 				<div class="grid grid-cols-4 gap-4">
 					<div class="col-span-1 border-r border-gray-200 flex flex-col items-center justify-center">
@@ -127,9 +116,18 @@
 				</div>
 			</div>
 		</div>
+		{#if selectedClubNightID}
+			<ClubNightDetailView
+				bind:clubNightID={selectedClubNightID}
+				on:close={() => (selectedClubNightID = null)}
+			/>
+		{/if}
+	</div>
+	<div class="flex-row-reverse gap-6 p-6">
 		<div class="w-1/5">
 			<div class="card h-64 max-h-[80vh] overflow-auto rounded-lg bg-base-200 p-6 shadow-md">
 				<button class="btn btn-success" on:click={createNewClubNight}>Create new event</button>
+				<a href="/statistics" class="btn btn-info mt-5">Statistics</a>
 			</div>
 		</div>
 		{#if isNewClubNight}

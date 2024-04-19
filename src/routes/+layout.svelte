@@ -32,6 +32,7 @@
 					<!-- Navbar menu content -->
 					{#if isLoggedIn}
 						<li><a href="/dashboard">Dashboard</a></li>
+						<li><a href="/statistics">Statistics</a></li>
 						<li><a href="/counter">Counter</a></li>
 					{:else}
 						<li><a href="/">Home</a></li>
@@ -48,6 +49,7 @@
 			<!-- Sidebar content -->
 			{#if isLoggedIn}
 				<li><a href="/dashboard">Dashboard</a></li>
+				<li><a href="/statistics">Statistics</a></li>
 				<li><a href="/counter">Counter</a></li>
 			{:else}
 				<li><a href="/">Home</a></li>
